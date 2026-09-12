@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>NEXA</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">NEXA</div>
+        </div>
+
+        <button class="header-button" type="button">⚙</button>
+    </header>
+
+
+    <!-- HOME -->
+    <section class="page active" id="home">
+
+        <div class="welcome">
+            <h1>Welcome to NEXA</h1>
+            <p>
+                Manage your mining balance, miners,
+                earnings and activity from one place.
+            </p>
+        </div>
+
+        <!-- Balance -->
+        <div class="balance-card">
+
+            <div class="balance-label">
+                Available Balance
+            </div>
+
+            <div class="balance" data-balance>
+                $0.0000
+            </div>
+
+            <div class="balance-sub">
+                USD Balance
+            </div>
+
+            <div class="live-profit">
+                <span>Live Mining</span>
+                <span data-mining>$0.000000</span>
+            </div>
+
+        </div>
+
+
+        <!-- Main buttons -->
+        <div class="button-row">
+
+            <button
+                class="btn btn-primary"
+                type="button"
+                data-action="deposit"
+            >
+                Deposit
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                type="button"
+                data-action="withdraw"
+            >
+                Withdraw
+            </button>
+
+        </div>
+
+
+        <!-- Stats -->
+        <div class="section">
+
+            <div class="section-title">
+                <h2>Overview</h2>
+                <span>Account</span>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Total Earned
+                    </div>
+
+                    <div class="stat-value">
+                        $18.7421
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Withdrawn
+                    </div>
+
+                    <div class="stat-value">
+                        $6.2834
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Daily Earning
+                    </div>
+
+                    <div class="stat-value">
+                        $0.0500
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Active Miners
+                    </div>
+
+                    <div class="stat-value">
+                        1
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Current Miner -->
+        <div class="section">
+
+            <div class="section-title">
+                <h2>Current Miner</h2>
+                <span>Active</span>
+            </div>
+
+            <div class="miner-card">
+
+                <div class="miner-top">
+                    <div class="miner-name">
+                        Starter Miner
+                    </div>
+
+                    <div class="miner-badge">
+                        ACTIVE
+                    </div>
+                </div>
+
+                <div class="miner-description">
+                    Your current mining plan is active.
+                    Earnings are calculated according to
+                    the configured mining rate.
+                </div>
+
+                <div class="miner-info">
+
+                    <div>
+                        <small>Plan</small>
+                        <strong>Starter</strong>
+                    </div>
+
+                    <div>
+                        <small>Daily</small>
+                        <strong>$0.2000</strong>
+                    </div>
+
+                    <div>
+                        <small>Duration</small>
+                        <strong>30 Days</strong>
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    style="width:100%;"
+                    data-page="miners"
+                >
+                    View Miners
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TASKS -->
+    <section class="page" id="tasks">
+
+        <div class="welcome">
+            <h1>Tasks</h1>
+            <p>
+                Complete available tasks and check
+                your account activity.
+            </p>
+        </div>
+
+        <div class="card">
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <div class="list-title">
+                            Join NEXA Community
+                        </div>
+
+                        <div class="list-subtitle">
+                            Telegram task
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary">
+                    Check
+                </button>
+
+            </div>
+
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        ★
+                    </div>
+
+                    <div>
+                        <div class="list-title">
+                            Daily Check-in
+                        </div>
+
+                        <div class="list-subtitle">
+                            Daily activity
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="btn btn-secondary">
+                    Open
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HISTORY -->
+    <section class="page" id="history">
+
+        <div class="welcome">
+            <h1>History</h1>
+            <p>
+                View your recent account transactions.
+            </p>
+        </div>
+
+        <div class="card">
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        +
+                    </div>
+
+                    <div>
+                        <div class="list-title">
+                            Mining Income
+                        </div>
+
+                        <div class="list-subtitle">
+                            Today
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="amount-positive">
+                    +$0.0500
+                </div>
+
+            </div>
+
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        ↓
+                    </div>
+
+                    <div>
+                        <div class="list-title">
+                            Withdrawal
+                        </div>
+
+                        <div class="list-subtitle">
+                            Previous transaction
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="amount-negative">
+                    -$2.0000
+                </div>
+
+            </div>
+
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        +
+                    </div>
+
+                    <div>
+                        <div class="list-title">
+                            Deposit
+                        </div>
+
+                        <div class="list-subtitle">
+                            Previous transaction
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="amount-positive">
+                    +$10.0000
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- REFERRALS -->
+    <section class="page" id="referrals">
+
+        <div class="welcome">
+            <h1>Referrals</h1>
+            <p>
+                Invite users with your referral code.
+            </p>
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-title">
+                <h2>Your Referral</h2>
+                <span>Code</span>
+            </div>
+
+            <div class="referral-box">
+
+                <div class="list-subtitle">
+                    Referral Code
+                </div>
+
+                <div class="referral-code">
+
+                    <input
+                        type="text"
+                        value="NEXA123456"
+                        readonly
+                    >
+
+                    <button
+                        type="button"
+                        data-copy-referral="NEXA123456"
+                    >
+                        Copy
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="stats-grid" style="margin-top:15px;">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Total Referrals
+                    </div>
+
+                    <div class="stat-value">
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Referral Earnings
+                    </div>
+
+                    <div class="stat-value">
+                        $0.0000
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROFILE -->
+    <section class="page" id="profile">
+
+        <div class="welcome">
+            <h1>Profile</h1>
+
+            <p>
+                Manage your NEXA account information.
+            </p>
+        </div>
+
+
+        <div class="card">
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <div class="list-title"
+                             data-user-name>
+                            NEXA User
+                        </div>
+
+                        <div class="list-subtitle">
+                            Telegram Account
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        $
+                    </div>
+
+                    <div>
+
+                        <div class="list-title">
+                            Balance
+                        </div>
+
+                        <div class="list-subtitle">
+                            Available USD
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount-positive"
+                    data-balance
+                >
+                    $0.0000
+                </div>
+
+            </div>
+
+
+            <div class="list-item">
+
+                <div class="list-left">
+
+                    <div class="list-icon">
+                        ⚙
+                    </div>
+
+                    <div>
+
+                        <div class="list-title">
+                            Settings
+                        </div>
+
+                        <div class="list-subtitle">
+                            Account preferences
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-secondary">
+                    Open
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MINERS -->
+    <section class="page" id="miners">
+
+        <div class="welcome">
+
+            <h1>Miner Store</h1>
+
+            <p>
+                Available mining plans.
+                Rates shown here are configurable
+                by the system administrator.
+            </p>
+
+        </div>
+
+
+        <div class="miner-card">
+
+            <div class="miner-top">
+
+                <div class="miner-name">
+                    Starter
+                </div>
+
+                <div class="miner-badge">
+                    BASIC
+                </div>
+
+            </div>
+
+            <div class="miner-description">
+                Entry-level mining plan.
+            </div>
+
+            <div class="miner-info">
+
+                <div>
+                    <small>Price</small>
+                    <strong>$10</strong>
+                </div>
+
+                <div>
+                    <small>Daily</small>
+                    <strong>$0.20</strong>
+                </div>
+
+                <div>
+                    <small>Duration</small>
+                    <strong>30 Days</strong>
+                </div>
+
+            </div>
+
+            <button class="btn btn-primary"
+                    style="width:100%;">
+                Select
+            </button>
+
+        </div>
+
+
+        <div class="miner-card">
+
+            <div class="miner-top">
+
+                <div class="miner-name">
+                    Master
+                </div>
+
+                <div class="miner-badge">
+                    PRO
+                </div>
+
+            </div>
+
+            <div class="miner-description">
+                Higher configured mining capacity.
+            </div>
+
+            <div class="miner-info">
+
+                <div>
+                    <small>Price</small>
+                    <strong>$50</strong>
+                </div>
+
+                <div>
+                    <small>Daily</small>
+                    <strong>$1.20</strong>
+                </div>
+
+                <div>
+                    <small>Duration</small>
+                    <strong>30 Days</strong>
+                </div>
+
+            </div>
+
+            <button class="btn btn-primary"
+                    style="width:100%;">
+                Select
+            </button>
+
+        </div>
+
+
+        <div class="miner-card">
+
+            <div class="miner-top">
+
+                <div class="miner-name">
+                    Elite
+                </div>
+
+                <div class="miner-badge">
+                    PREMIUM
+                </div>
+
+            </div>
+
+            <div class="miner-description">
+                Premium configured mining capacity.
+            </div>
+
+            <div class="miner-info">
+
+                <div>
+                    <small>Price</small>
+                    <strong>$100</strong>
+                </div>
+
+                <div>
+                    <small>Daily</small>
+                    <strong>$3.00</strong>
+                </div>
+
+                <div>
+                    <small>Duration</small>
+                    <strong>30 Days</strong>
+                </div>
+
+            </div>
+
+            <button class="btn btn-primary"
+                    style="width:100%;">
+                Select
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+
+        <div
+            class="nav-item active"
+            data-page="home"
+        >
+            <div class="nav-icon">⌂</div>
+            <div>Home</div>
+        </div>
+
+
+        <div
+            class="nav-item"
+            data-page="tasks"
+        >
+            <div class="nav-icon">✓</div>
+            <div>Tasks</div>
+        </div>
+
+
+        <div
+            class="nav-item"
+            data-page="history"
+        >
+            <div class="nav-icon">↔</div>
+            <div>History</div>
+        </div>
+
+
+        <div
+            class="nav-item"
+            data-page="referrals"
+        >
+            <div class="nav-icon">♧</div>
+            <div>Referrals</div>
+        </div>
+
+
+        <div
+            class="nav-item"
+            data-page="profile"
+        >
+            <div class="nav-icon">●</div>
+            <div>Profile</div>
+        </div>
+
+    </nav>
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
