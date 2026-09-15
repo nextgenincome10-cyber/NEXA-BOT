@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXA Admin Panel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #08070b;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #29232f;
+            background: #0d0b12;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header h1 {
+            color: #f5c542;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #999;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 230px;
+            background: #0d0b12;
+            border-right: 1px solid #29232f;
+            padding: 15px;
+        }
+
+        .menu-button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: #aaa;
+            padding: 13px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .menu-button:hover,
+        .menu-button.active {
+            background: #19141f;
+            color: #f5c542;
+        }
+
+        .content {
+            flex: 1;
+            padding: 25px;
+            max-width: 1200px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #100d15;
+            border: 1px solid #29232f;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #f5c542;
+        }
+
+        .section {
+            background: #100d15;
+            border: 1px solid #29232f;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #08070b;
+            border: 1px solid #332b3b;
+            color: #fff;
+            border-radius: 9px;
+            padding: 12px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #f5c542;
+        }
+
+        .button {
+            background: #f5c542;
+            color: #09080a;
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            opacity: .9;
+        }
+
+        .button.danger {
+            background: #b83a3a;
+            color: white;
+        }
+
+        .button.secondary {
+            background: #24202a;
+            color: #fff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #29232f;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            color: #f5c542;
+            font-weight: bold;
+        }
+
+        td {
+            color: #ddd;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #24202a;
+            font-size: 11px;
+        }
+
+        .notice {
+            padding: 12px;
+            background: #19141f;
+            border: 1px solid #332b3b;
+            border-radius: 9px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .row > * {
+            flex: 1;
+        }
+
+        .checkbox-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .checkbox-row input {
+            width: auto;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: 0;
+                border-bottom: 1px solid #29232f;
+                display: flex;
+                overflow-x: auto;
+                gap: 5px;
+            }
+
+            .menu-button {
+                min-width: 110px;
+                text-align: center;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>◆ NEXA ADMIN</h1>
+        <p>Mining platform administration panel</p>
+    </header>
+
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <button class="menu-button active"
+                    data-page="dashboard">
+                📊 Dashboard
+            </button>
+
+            <button class="menu-button"
+                    data-page="users">
+                👥 Users
+            </button>
+
+            <button class="menu-button"
+                    data-page="miners">
+                ⛏ Miners
+            </button>
+
+            <button class="menu-button"
+                    data-page="networks">
+                💳 Networks
+            </button>
+
+            <button class="menu-button"
+                    data-page="deposits">
+                💰 Deposits
+            </button>
+
+            <button class="menu-button"
+                    data-page="withdrawals">
+                💸 Withdrawals
+            </button>
+
+            <button class="menu-button"
+                    data-page="tasks">
+                📋 Tasks
+            </button>
+
+            <button class="menu-button"
+                    data-page="fees">
+                💵 Fees
+            </button>
+
+            <button class="menu-button"
+                    data-page="referrals">
+                🔗 Referrals
+            </button>
+
+            <button class="menu-button"
+                    data-page="settings">
+                ⚙ Settings
+            </button>
+
+            <button class="menu-button"
+                    data-page="broadcast">
+                📢 Broadcast
+            </button>
+
+        </aside>
+
+
+        <!-- CONTENT -->
+
+        <main class="content">
+
+
+            <!-- DASHBOARD -->
+
+            <section
+                id="dashboard"
+                class="page active">
+
+                <h2 class="page-title">
+                    Dashboard
+                </h2>
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="card-title">
+                            Total Users
+                        </div>
+
+                        <div
+                            class="card-value"
+                            id="total-users">
+                            0
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            Total Balance
+                        </div>
+
+                        <div
+                            class="card-value"
+                            id="total-balance">
+                            $0.0000
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            Deposits
+                        </div>
+
+                        <div
+                            class="card-value"
+                            id="total-deposits">
+                            0
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            Withdrawals
+                        </div>
+
+                        <div
+                            class="card-value"
+                            id="total-withdrawals">
+                            0
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="section">
+
+                    <h3>System Status</h3>
+
+                    <div class="notice">
+                        Admin dashboard interface loaded.
+                        Backend statistics will appear
+                        after admin API authentication
+                        is connected.
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="loadDashboard()">
+                        Refresh Dashboard
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- USERS -->
+
+            <section
+                id="users"
+                class="page">
+
+                <h2 class="page-title">
+                    Users
+                </h2>
+
+                <div class="section">
+
+                    <div class="row">
+
+                        <input
+                            id="user-search"
+                            placeholder="Search Telegram ID or username">
+
+                        <button
+                            class="button"
+                            onclick="searchUsers()">
+                            Search
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="section">
+
+                    <div class="table-wrap">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Telegram ID</th>
+                                    <th>Username</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="users-table">
+
+                                <tr>
+                                    <td
+                                        colspan="5"
+                                        class="empty">
+                                        No user data loaded.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MINERS -->
+
+            <section
+                id="miners"
+                class="page">
+
+                <h2 class="page-title">
+                    Miner Plans
+                </h2>
+
+                <div class="section">
+
+                    <h3>Add Miner</h3>
+
+                    <div class="form-group">
+                        <label>Miner Name</label>
+                        <input
+                            id="miner-name"
+                            placeholder="Example: Starter">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input
+                            id="miner-description"
+                            placeholder="Miner description">
+                    </div>
+
+                    <div class="row">
+
+                        <div class="form-group">
+                            <label>Price USD</label>
+                            <input
+                                id="miner-price"
+                                type="number"
+                                step="0.01">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Daily Rate USD</label>
+                            <input
+                                id="miner-rate"
+                                type="number"
+                                step="0.0001">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Duration Days</label>
+                            <input
+                                id="miner-duration"
+                                type="number"
+                                value="30">
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="addMiner()">
+                        Add Miner
+                    </button>
+
+                </div>
+
+                <div class="section">
+
+                    <h3>Current Miners</h3>
+
+                    <div
+                        id="miners-list"
+                        class="empty">
+                        Miner data will appear here.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- NETWORKS -->
+
+            <section
+                id="networks"
+                class="page">
+
+                <h2 class="page-title">
+                    Deposit Networks
+                </h2>
+
+                <div class="section">
+
+                    <h3>Network Wallet Address</h3>
+
+                    <div class="notice">
+                        Set the wallet address that
+                        users should see for deposits.
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Network
+                        </label>
+
+                        <select id="admin-network">
+                            <option value="">
+                                Select network
+                            </option>
+
+                            <option value="USDT_TRC20">
+                                USDT TRC20
+                            </option>
+
+                            <option value="USDT_BEP20">
+                                USDT BEP20
+                            </option>
+
+                            <option value="TON">
+                                TON
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Wallet Address
+                        </label>
+
+                        <input
+                            id="admin-wallet"
+                            placeholder="Enter wallet address">
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="saveNetwork()">
+                        Save Wallet Address
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- DEPOSITS -->
+
+            <section
+                id="deposits"
+                class="page">
+
+                <h2 class="page-title">
+                    Deposits
+                </h2>
+
+                <div class="section">
+
+                    <div class="notice">
+                        Pending deposit requests
+                        will be displayed here.
+                    </div>
+
+                    <div
+                        id="deposits-list"
+                        class="empty">
+                        No deposit data loaded.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- WITHDRAWALS -->
+
+            <section
+                id="withdrawals"
+                class="page">
+
+                <h2 class="page-title">
+                    Withdrawals
+                </h2>
+
+                <div class="section">
+
+                    <div class="notice">
+                        Review withdrawal requests
+                        before approving them.
+                    </div>
+
+                    <div
+                        id="withdrawals-list"
+                        class="empty">
+                        No withdrawal data loaded.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TASKS -->
+
+            <section
+                id="tasks"
+                class="page">
+
+                <h2 class="page-title">
+                    Tasks
+                </h2>
+
+                <div class="section">
+
+                    <h3>Add New Task</h3>
+
+                    <div class="form-group">
+                        <label>Task Title</label>
+
+                        <input
+                            id="task-title"
+                            placeholder="Example: Join Telegram Channel">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+
+                        <textarea
+                            id="task-description"
+                            placeholder="Task instructions"></textarea>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Reward USD
+                            </label>
+
+                            <input
+                                id="task-reward"
+                                type="number"
+                                step="0.0001">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Task Type
+                            </label>
+
+                            <select id="task-type">
+
+                                <option value="telegram">
+                                    Telegram
+                                </option>
+
+                                <option value="website">
+                                    Website
+                                </option>
+
+                                <option value="social">
+                                    Social
+                                </option>
+
+                                <option value="custom">
+                                    Custom
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Target / Link
+                        </label>
+
+                        <input
+                            id="task-target"
+                            placeholder="Task target">
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="addTask()">
+                        Add Task
+                    </button>
+
+                </div>
+
+                <div class="section">
+
+                    <h3>Task List</h3>
+
+                    <div
+                        id="tasks-list"
+                        class="empty">
+                        No tasks loaded.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FEES -->
+
+            <section
+                id="fees"
+                class="page">
+
+                <h2 class="page-title">
+                    Fees
+                </h2>
+
+                <div class="section">
+
+                    <h3>Withdrawal Fee</h3>
+
+                    <div class="row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Fee Type
+                            </label>
+
+                            <select id="fee-type">
+
+                                <option value="percentage">
+                                    Percentage
+                                </option>
+
+                                <option value="fixed">
+                                    Fixed USD
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Fee Value
+                            </label>
+
+                            <input
+                                id="fee-value"
+                                type="number"
+                                step="0.0001">
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="saveFee()">
+                        Save Fee
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- REFERRALS -->
+
+            <section
+                id="referrals"
+                class="page">
+
+                <h2 class="page-title">
+                    Referral Settings
+                </h2>
+
+                <div class="section">
+
+                    <h3>Referral Reward</h3>
+
+                    <div class="form-group">
+
+                        <label>
+                            Reward per referral (USD)
+                        </label>
+
+                        <input
+                            id="referral-reward"
+                            type="number"
+                            step="0.0001">
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="saveReferralSettings()">
+                        Save Referral Setting
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- SETTINGS -->
+
+            <section
+                id="settings"
+                class="page">
+
+                <h2 class="page-title">
+                    General Settings
+                </h2>
+
+                <div class="section">
+
+                    <div class="form-group">
+
+                        <label>
+                            Minimum Withdrawal USD
+                        </label>
+
+                        <input
+                            id="minimum-withdrawal"
+                            type="number"
+                            step="0.01"
+                            value="1">
+
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <input
+                            type="checkbox"
+                            id="mining-enabled"
+                            checked>
+
+                        <label for="mining-enabled">
+                            Mining Enabled
+                        </label>
+
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <input
+                            type="checkbox"
+                            id="deposit-enabled"
+                            checked>
+
+                        <label for="deposit-enabled">
+                            Deposits Enabled
+                        </label>
+
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <input
+                            type="checkbox"
+                            id="withdrawal-enabled"
+                            checked>
+
+                        <label for="withdrawal-enabled">
+                            Withdrawals Enabled
+                        </label>
+
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <input
+                            type="checkbox"
+                            id="tasks-enabled"
+                            checked>
+
+                        <label for="tasks-enabled">
+                            Tasks Enabled
+                        </label>
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="saveGeneralSettings()">
+                        Save Settings
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- BROADCAST -->
+
+            <section
+                id="broadcast"
+                class="page">
+
+                <h2 class="page-title">
+                    Broadcast
+                </h2>
+
+                <div class="section">
+
+                    <div class="notice">
+                        Use this section later to send
+                        an announcement to users through
+                        the Telegram bot.
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Message
+                        </label>
+
+                        <textarea
+                            id="broadcast-message"
+                            placeholder="Write announcement..."></textarea>
+
+                    </div>
+
+                    <button
+                        class="button"
+                        onclick="prepareBroadcast()">
+                        Prepare Broadcast
+                    </button>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // ==========================================
+        // ADMIN NAVIGATION
+        // ==========================================
+
+        const menuButtons =
+            document.querySelectorAll(
+                ".menu-button"
+            );
+
+        const pages =
+            document.querySelectorAll(
+                ".page"
+            );
+
+
+        menuButtons.forEach((button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const page =
+                        button.dataset.page;
+
+                    pages.forEach((item) => {
+
+                        item.classList.toggle(
+                            "active",
+                            item.id === page
+                        );
+
+                    });
+
+                    menuButtons.forEach((item) => {
+
+                        item.classList.toggle(
+                            "active",
+                            item === button
+                        );
+
+                    });
+
+                }
+            );
+
+        });
+
+
+        // ==========================================
+        // DEMO ACTIONS
+        // ==========================================
+
+        function loadDashboard() {
+
+            alert(
+                "Dashboard API will be connected next."
+            );
+
+        }
+
+
+        function searchUsers() {
+
+            alert(
+                "User search API will be connected next."
+            );
+
+        }
+
+
+        function addMiner() {
+
+            const name =
+                document.getElementById(
+                    "miner-name"
+                ).value.trim();
+
+            if (!name) {
+
+                alert(
+                    "Enter miner name."
+                );
+
+                return;
+            }
+
+            alert(
+                "Miner form is ready. " +
+                "Backend connection will be added next."
+            );
+
+        }
+
+
+        function saveNetwork() {
+
+            const network =
+                document.getElementById(
+                    "admin-network"
+                ).value;
+
+            const wallet =
+                document.getElementById(
+                    "admin-wallet"
+                ).value.trim();
+
+
+            if (!network) {
+
+                alert(
+                    "Select a network."
+                );
+
+                return;
+            }
+
+
+            if (!wallet) {
+
+                alert(
+                    "Enter wallet address."
+                );
+
+                return;
+            }
+
+
+            alert(
+                "Network form is ready. " +
+                "Backend connection will be added next."
+            );
+
+        }
+
+
+        function addTask() {
+
+            const title =
+                document.getElementById(
+                    "task-title"
+                ).value.trim();
+
+
+            if (!title) {
+
+                alert(
+                    "Enter task title."
+                );
+
+                return;
+            }
+
+
+            alert(
+                "Task form is ready. " +
+                "Backend connection will be added next."
+            );
+
+        }
+
+
+        function saveFee() {
+
+            alert(
+                "Fee form is ready. " +
+                "Backend connection will be added next."
+            );
+
+        }
+
+
+        function saveReferralSettings() {
+
+            alert(
+                "Referral settings form is ready."
+            );
+
+        }
+
+
+        function saveGeneralSettings() {
+
+            alert(
+                "General settings form is ready."
+            );
+
+        }
+
+
+        function prepareBroadcast() {
+
+            const message =
+                document.getElementById(
+                    "broadcast-message"
+                ).value.trim();
+
+
+            if (!message) {
+
+                alert(
+                    "Write a broadcast message first."
+                );
+
+                return;
+            }
+
+
+            alert(
+                "Broadcast prepared. " +
+                "Telegram sending will be connected "
+                + "after admin authentication."
+            );
+
+        }
+
+    </script>
+
+</body>
+</html>
