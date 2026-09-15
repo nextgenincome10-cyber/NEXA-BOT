@@ -1,61 +1,34 @@
 import os
+from dotenv import load_dotenv
 
-# ==============================
-# NEXA BOT CONFIGURATION
-# ==============================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# এখানে নিজের নতুন BotFather Token বসাও
-BOT_TOKEN = "8897017525:AAEDWSyvqVEQSggWXkLwPeRlUKi3ty4L-To"
+# Load .env from the NEXA-BOT folder
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
+# Telegram Bot Token
+# Keep your token inside .env — never share it publicly.
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# ==============================
-# NEXA MINI APP
-# ==============================
-
-WEBAPP_URL = (
-    "https://YOUR-USERNAME.github.io/NEXA-BOT/webapp/"
+# Telegram Mini App URL
+WEBAPP_URL = os.getenv(
+    "WEBAPP_URL",
+    "https://nextgenincome10-cyber.github.io/NEXA-BOT/webapp/"
 )
 
-
-# ==============================
-# DATABASE
-# ==============================
-
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
-)
-
+# Database
 DATABASE_PATH = os.path.join(
     BASE_DIR,
     "database",
     "nexa.db"
 )
 
-
-# ==============================
-# APP INFORMATION
-# ==============================
-
+# App settings
 APP_NAME = "NEXA"
 CURRENCY = "USD"
 
-
-# ==============================
-# MINING SETTINGS
-# ==============================
-
-MINING_ENABLED = True
-
-
-# ==============================
-# WITHDRAW SETTINGS
-# ==============================
-
+# Withdrawal settings
 MINIMUM_WITHDRAWAL = 1.0
 
-
-# ==============================
-# DEBUG
-# ==============================
-
-DEBUG = False
+# Mining
+MINING_ENABLED = True
