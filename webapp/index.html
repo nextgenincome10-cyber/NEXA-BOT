@@ -23,7 +23,7 @@
             <div class="logo-text">NEXA</div>
         </div>
 
-        <button class="header-button" type="button">⚙</button>
+        <button class="header-button" type="button" data-page="settings">⚙</button>
     </header>
 
 
@@ -262,7 +262,7 @@
 
                 </div>
 
-                <button class="btn btn-secondary">
+                <button class="btn btn-secondary" type="button" data-page="settings">
                     Open
                 </button>
 
@@ -367,6 +367,163 @@
 
         </div>
 
+    </section>
+
+
+    <!-- DEPOSIT -->
+    <section class="page" id="deposit">
+        <div class="welcome">
+            <h1>Deposit</h1>
+            <p>Choose a network and submit your deposit details.</p>
+        </div>
+
+        <div class="card">
+            <div class="section-title">
+                <h2>Deposit</h2>
+                <span>Pending Review</span>
+            </div>
+
+            <div class="list-item">
+                <div>
+                    <div class="list-title">Network</div>
+                    <div class="list-subtitle">Select the available deposit network</div>
+                </div>
+                <select id="deposit-network" style="padding:10px;border-radius:10px;">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div style="margin-top:15px;">
+                <div class="list-subtitle">Deposit Address</div>
+                <div id="deposit-address"
+                     style="margin-top:8px;padding:12px;border-radius:10px;word-break:break-all;background:#111;">
+                    Select a network
+                </div>
+            </div>
+
+            <div style="margin-top:15px;">
+                <label class="list-subtitle" for="deposit-amount">Amount (USD)</label>
+                <input id="deposit-amount" type="number" min="0.01" step="0.01"
+                       placeholder="10.00"
+                       style="width:100%;padding:12px;margin-top:8px;border-radius:10px;">
+            </div>
+
+            <div style="margin-top:15px;">
+                <label class="list-subtitle" for="deposit-tx">Transaction Hash (optional)</label>
+                <input id="deposit-tx" type="text"
+                       placeholder="Transaction hash"
+                       style="width:100%;padding:12px;margin-top:8px;border-radius:10px;">
+            </div>
+
+            <button class="btn btn-primary" id="submit-deposit"
+                    type="button" style="width:100%;margin-top:15px;">
+                Submit Deposit
+            </button>
+
+            <div id="deposit-message" class="list-subtitle" style="margin-top:10px;"></div>
+        </div>
+    </section>
+
+    <!-- WITHDRAW -->
+    <section class="page" id="withdraw">
+        <div class="welcome">
+            <h1>Withdraw</h1>
+            <p>Submit a withdrawal request from your available USD balance.</p>
+        </div>
+
+        <div class="card">
+            <div class="section-title">
+                <h2>Withdrawal</h2>
+                <span>Pending Review</span>
+            </div>
+
+            <div class="list-item">
+                <div>
+                    <div class="list-title">Available Balance</div>
+                    <div class="list-subtitle">Your current USD balance</div>
+                </div>
+                <div class="amount-positive" data-balance>$0.0000</div>
+            </div>
+
+            <div style="margin-top:15px;">
+                <label class="list-subtitle" for="withdraw-network">Network</label>
+                <select id="withdraw-network"
+                        style="width:100%;padding:12px;margin-top:8px;border-radius:10px;">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div style="margin-top:15px;">
+                <label class="list-subtitle" for="withdraw-address">Wallet Address</label>
+                <input id="withdraw-address" type="text"
+                       placeholder="Enter your wallet address"
+                       style="width:100%;padding:12px;margin-top:8px;border-radius:10px;">
+            </div>
+
+            <div style="margin-top:15px;">
+                <label class="list-subtitle" for="withdraw-amount">Amount (USD)</label>
+                <input id="withdraw-amount" type="number" min="0.01" step="0.01"
+                       placeholder="1.00"
+                       style="width:100%;padding:12px;margin-top:8px;border-radius:10px;">
+            </div>
+
+            <div id="withdraw-fees"
+                 class="list-subtitle"
+                 style="margin-top:12px;">
+                Fee information will appear here.
+            </div>
+
+            <button class="btn btn-secondary" id="submit-withdraw"
+                    type="button" style="width:100%;margin-top:15px;">
+                Submit Withdrawal
+            </button>
+
+            <div id="withdraw-message" class="list-subtitle" style="margin-top:10px;"></div>
+        </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="settings">
+        <div class="welcome">
+            <h1>Settings</h1>
+            <p>Account preferences and NEXA app options.</p>
+        </div>
+
+        <div class="card">
+            <div class="list-item">
+                <div class="list-left">
+                    <div class="list-icon">🔔</div>
+                    <div>
+                        <div class="list-title">Notifications</div>
+                        <div class="list-subtitle">View your NEXA notifications</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" type="button" data-page="notifications">Open</button>
+            </div>
+
+            <div class="list-item">
+                <div class="list-left">
+                    <div class="list-icon">◷</div>
+                    <div>
+                        <div class="list-title">Minimum Withdrawal</div>
+                        <div class="list-subtitle" id="minimum-withdrawal-setting">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="page" id="notifications">
+        <div class="welcome">
+            <h1>Notifications</h1>
+            <p>Your latest NEXA account notifications.</p>
+        </div>
+        <div class="card" id="notifications-list">
+            <div class="list-item">
+                <div class="list-subtitle">Loading notifications...</div>
+            </div>
+        </div>
     </section>
 
 
