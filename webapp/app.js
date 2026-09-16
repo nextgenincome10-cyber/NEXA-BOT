@@ -6,7 +6,7 @@
 const tg = window.Telegram?.WebApp;
 
 // Backend API URL
-const API_BASE_URL = "http://127.0.0.1:8080";
+const API_BASE_URL = "https://scooter-regulate-untracked.ngrok-free.dev";
 
 const appState = {
     telegramUser: null,
