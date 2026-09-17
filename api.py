@@ -13,6 +13,7 @@ from urllib.parse import parse_qsl
 from aiohttp import web
 
 from config import BOT_TOKEN
+
 from database import (
     init_db,
     get_or_create_user,
@@ -28,6 +29,9 @@ from database import (
     get_referral_count,
     get_active_fees,
     get_setting,
+    get_active_user_miner,
+    start_mining_session,
+    calculate_mining_earning,
 )
 
 
@@ -58,8 +62,12 @@ async def cors_middleware(request, handler):
             response = error
 
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-Telegram-Init-Data"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = (
+        "Content-Type, X-Telegram-Init-Data"
+    )
+    response.headers["Access-Control-Allow-Methods"] = (
+        "GET, POST, OPTIONS"
+    )
 
     return response
 
@@ -90,8 +98,6 @@ def error(message, status=400):
 def validate_telegram_init_data(init_data: str):
     """
     Validate Telegram WebApp initData using BOT_TOKEN.
-
-    Never trust the user ID sent directly from the browser.
     """
 
     if not init_data:
@@ -102,7 +108,12 @@ def validate_telegram_init_data(init_data: str):
         return None
 
     try:
-        parsed_data = dict(parse_qsl(init_data, keep_blank_values=True))
+        parsed_data = dict(
+            parse_qsl(
+                init_data,
+                keep_blank_values=True
+            )
+        )
 
         received_hash = parsed_data.pop("hash", None)
 
@@ -132,14 +143,12 @@ def validate_telegram_init_data(init_data: str):
         ):
             return None
 
-        # Check auth_date to prevent very old sessions.
         auth_date = parsed_data.get("auth_date")
 
         if auth_date:
             try:
                 auth_time = int(auth_date)
 
-                # 24 hour validity window
                 if time.time() - auth_time > 86400:
                     return None
 
@@ -163,11 +172,12 @@ def validate_telegram_init_data(init_data: str):
             "Telegram initData validation failed: %s",
             exc
         )
+
         return None
 
 
 # =========================================================
-# AUTH MIDDLEWARE HELPER
+# AUTHENTICATION
 # =========================================================
 
 def get_authenticated_user(request):
@@ -202,6 +212,65 @@ def require_user(request):
 
 
 # =========================================================
+# ADMIN AUTHENTICATION
+# =========================================================
+
+def get_admin_telegram_id():
+    value = os.getenv(
+        "ADMIN_TELEGRAM_ID",
+        ""
+    ).strip()
+
+    if not value:
+        return None
+
+    try:
+        return int(value)
+
+    except ValueError:
+        logger.error(
+            "ADMIN_TELEGRAM_ID is invalid."
+        )
+
+        return None
+
+
+def require_admin(request):
+    telegram_user = get_authenticated_user(request)
+
+    if not telegram_user:
+        raise web.HTTPUnauthorized(
+            text=json.dumps({
+                "success": False,
+                "message": "Telegram authentication required."
+            }),
+            content_type="application/json"
+        )
+
+    admin_id = get_admin_telegram_id()
+
+    if not admin_id:
+        raise web.HTTPForbidden(
+            text=json.dumps({
+                "success": False,
+                "message": "Admin account is not configured."
+            }),
+            content_type="application/json"
+        )
+
+    if int(telegram_user["id"]) != admin_id:
+        raise web.HTTPForbidden(
+            text=json.dumps({
+                "success": False,
+                "message": "Admin access denied."
+            }),
+            content_type="application/json"
+        )
+
+    return telegram_user
+
+
+# =========================================================
 # HEALTH
 # =========================================================
 
@@ -209,6 +278,16 @@ async def health(request):
     return success({
         "service": "NEXA API",
         "status": "online"
+    })
+
+
+async def admin_test(request):
+    admin = require_admin(request)
+
+    return success({
+        "admin": True,
+        "telegram_id": admin["id"],
+        "message": "Admin authentication successful."
     })
 
 
@@ -267,7 +346,9 @@ async def network_details(request):
     code = request.match_info.get("code")
 
     if not code:
-        return error("Network code is required.")
+        return error(
+            "Network code is required."
+        )
 
     network = get_network(code)
 
@@ -284,9 +365,7 @@ async def network_details(request):
         )
 
     return success(network)
-
-
-# =========================================================
+    # =========================================================
 # DEPOSIT
 # =========================================================
 
@@ -336,7 +415,9 @@ async def deposit_create(request):
         telegram_id=telegram_user["id"],
         amount_usd=amount,
         network_code=network_code,
-        wallet_address=wallet_address or network.get("address"),
+        wallet_address=(
+            wallet_address or network.get("address")
+        ),
         transaction_hash=transaction_hash or None
     )
 
@@ -427,10 +508,7 @@ async def withdrawal_create(request):
             "Insufficient balance."
         )
 
-    # IMPORTANT:
-    # Balance is NOT deducted here.
-    # It should only be deducted by the admin/backend
-    # after the withdrawal is approved.
+    # Balance is deducted only after admin approval.
     withdrawal_id = create_withdrawal(
         telegram_id=telegram_user["id"],
         amount_usd=amount,
@@ -574,6 +652,40 @@ async def public_settings(request):
 
 
 # =========================================================
+# MINING API
+# =========================================================
+
+async def mining_status(request):
+    telegram_user = require_user(request)
+
+    user = get_user_by_telegram_id(
+        telegram_user["id"]
+    )
+
+    if not user:
+        return error(
+            "User not found.",
+            404
+        )
+
+    miner = get_active_user_miner(
+        user["id"]
+    )
+
+    if not miner:
+        return success({
+            "active": False,
+            "message": "No active miner."
+        })
+
+    return success({
+        "active": True,
+        "miner_name": miner["name"],
+        "daily_rate_usd": miner["daily_rate_usd"],
+        "duration_days": miner["duration_days"]
+    })
+    
+# =========================================================
 # APP
 # =========================================================
 
@@ -583,118 +695,35 @@ app = web.Application(
     ]
 )
 
-
 # =========================================================
 # ROUTES
 # =========================================================
 
-app.router.add_route(
-    "GET",
-    "/",
-    health
-)
+app.router.add_route("GET", "/api/admin-test", admin_test)
+app.router.add_route("GET", "/", health)
+app.router.add_route("GET", "/api/health", health)
+app.router.add_route("GET", "/api/me", user_me)
+app.router.add_route("GET", "/api/balance", user_balance)
+app.router.add_route("GET", "/api/mining/status", mining_status)
+app.router.add_route("GET", "/api/networks", networks)
+app.router.add_route("GET", "/api/networks/{code}", network_details)
 
-app.router.add_route(
-    "GET",
-    "/api/health",
-    health
-)
+app.router.add_route("POST", "/api/deposit", deposit_create)
+app.router.add_route("POST", "/api/withdraw", withdrawal_create)
 
-app.router.add_route(
-    "GET",
-    "/api/me",
-    user_me
-)
-
-app.router.add_route(
-    "GET",
-    "/api/balance",
-    user_balance
-)
-
-app.router.add_route(
-    "GET",
-    "/api/networks",
-    networks
-)
-
-app.router.add_route(
-    "GET",
-    "/api/networks/{code}",
-    network_details
-)
-
-app.router.add_route(
-    "POST",
-    "/api/deposit",
-    deposit_create
-)
-
-app.router.add_route(
-    "POST",
-    "/api/withdraw",
-    withdrawal_create
-)
-
-app.router.add_route(
-    "GET",
-    "/api/history",
-    history
-)
-
-app.router.add_route(
-    "GET",
-    "/api/tasks",
-    tasks
-)
-
-app.router.add_route(
-    "GET",
-    "/api/referrals",
-    referrals
-)
-
-app.router.add_route(
-    "GET",
-    "/api/notifications",
-    notifications
-)
-
-app.router.add_route(
-    "GET",
-    "/api/fees",
-    fees
-)
-
-app.router.add_route(
-    "GET",
-    "/api/settings",
-    public_settings
-)
-
+app.router.add_route("GET", "/api/history", history)
+app.router.add_route("GET", "/api/tasks", tasks)
+app.router.add_route("GET", "/api/referrals", referrals)
+app.router.add_route("GET", "/api/notifications", notifications)
+app.router.add_route("GET", "/api/fees", fees)
+app.router.add_route("GET", "/api/settings", public_settings)
 
 # =========================================================
 # START SERVER
 # =========================================================
 
 if __name__ == "__main__":
-
     init_db()
-
-    port = int(
-        os.getenv(
-            "PORT",
-            "8080"
-        )
-    )
-
-    logger.info(
-        "NEXA API starting on port %s",
-        port
-    )
-
-    web.run_app(
-        app,
-        host="0.0.0.0",
-        port=port
-    )
+    port = int(os.getenv("PORT", "8080"))
+    logger.info("NEXA API starting on port %s", port)
+    web.run_app(app, host="0.0.0.0", port=port)

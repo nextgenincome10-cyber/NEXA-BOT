@@ -1,3 +1,4 @@
+
 import asyncio
 import logging
 
@@ -15,6 +16,13 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+
+if not BOT_TOKEN:
+    raise RuntimeError(
+        "BOT_TOKEN is missing. Please add it to the .env file."
+    )
+
+
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
@@ -22,6 +30,9 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start_command(message: Message):
     user = message.from_user
+
+    if not user:
+        return
 
     get_or_create_user(
         telegram_id=user.id,
@@ -39,22 +50,26 @@ async def start_command(message: Message):
 
     keyboard.adjust(1)
 
+    first_name = user.first_name or "User"
+
     await message.answer(
-        f"👋 Welcome to NEXA, {user.first_name}!\n\n"
-        "Manage your mining dashboard, balance, "
-        "tasks, referrals and account activity "
-        "from the NEXA Mini App.\n\n"
+        f"👋 Welcome to NEXA, {first_name}!\n\n"
+        "Manage your mining dashboard, balance, tasks, "
+        "referrals and account activity from the NEXA Mini App.\n\n"
         "Tap the button below to open NEXA.",
         reply_markup=keyboard.as_markup()
     )
 
 
 async def main():
-    print("NEXA Bot is starting...")
+    logging.info("NEXA Bot is starting...")
 
     init_db()
 
-    await dp.start_polling(bot)
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await bot.session.close()
 
 
 if __name__ == "__main__":
