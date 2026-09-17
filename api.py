@@ -25,6 +25,7 @@ from database import (
     create_withdrawal,
     get_user_transactions,
     get_active_tasks,
+    add_task,
     get_user_notifications,
     get_referral_count,
     get_active_fees,
@@ -686,6 +687,50 @@ async def mining_status(request):
     })
     
 # =========================================================
+# =========================================================
+# ADMIN TASK API
+# =========================================================
+
+async def admin_add_task(request):
+    require_admin(request)
+
+    try:
+        body = await request.json()
+    except Exception:
+        return error("Invalid JSON.")
+
+    title = str(body.get("title", "")).strip()
+    description = str(body.get("description", "")).strip()
+    task_type = str(body.get("task_type", "custom")).strip()
+    target = str(body.get("target", "")).strip()
+
+    try:
+        reward_usd = float(body.get("reward_usd", 0))
+    except (TypeError, ValueError):
+        return error("Invalid reward amount.")
+
+    if not title:
+        return error("Task title is required.")
+
+    if reward_usd < 0:
+        return error("Reward cannot be negative.")
+
+    task_id = add_task(
+        title=title,
+        description=description,
+        reward_usd=reward_usd,
+        task_type=task_type,
+        target=target
+    )
+
+    return success(
+        {
+            "task_id": task_id,
+            "title": title,
+            "reward_usd": reward_usd
+        },
+        "Task added successfully."
+    )
 # APP
 # =========================================================
 

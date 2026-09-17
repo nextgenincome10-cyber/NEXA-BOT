@@ -1225,7 +1225,7 @@ async function addTask() {
     };
 
     try {
-        const response = await fetch("/admin/tasks", {
+        const response = await fetch("https://scooter-regulate-untracked.ngrok-free.dev/admin/tasks", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
