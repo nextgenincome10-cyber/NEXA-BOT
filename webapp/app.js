@@ -323,50 +323,37 @@ function setupNavigation() {
 // ======================================================
 
 async function loadNetworks(type) {
-
     const selectId =
         type === "deposit"
             ? "deposit-network"
             : "withdraw-network";
 
-    const select =
-        document.getElementById(selectId);
+    const select = document.getElementById(selectId);
 
     if (!select) return;
 
     try {
+        const networks = await apiRequest("/api/networks");
 
-        const networks =
-            await apiRequest("/api/networks");
-
-        appState.networks =
-            Array.isArray(networks)
-                ? networks
-                : [];
+        appState.networks = Array.isArray(networks)
+            ? networks
+            : (Array.isArray(networks?.data) ? networks.data : []);
 
         select.innerHTML = "";
 
         if (!appState.networks.length) {
-
             select.innerHTML =
                 '<option value="">No networks available</option>';
-
             return;
         }
 
         appState.networks.forEach((network) => {
+            const option = document.createElement("option");
 
-            const option =
-                document.createElement("option");
-
-            option.value =
-                network.code;
-
-            option.textContent =
-                network.name;
+            option.value = network.code;
+            option.textContent = network.name;
 
             select.appendChild(option);
-
         });
 
         if (type === "deposit") {
@@ -374,11 +361,7 @@ async function loadNetworks(type) {
         }
 
     } catch (error) {
-
-        console.log(
-            "Network API error:",
-            error
-        );
+        console.error("Network API error:", error);
 
         select.innerHTML =
             '<option value="">Unable to load networks</option>';

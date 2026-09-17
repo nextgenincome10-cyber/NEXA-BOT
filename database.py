@@ -325,21 +325,19 @@ def update_network_address(
     connection = get_connection()
     cursor = connection.cursor()
 
-    cursor.execute(
-        """
+    cursor.execute("""
         UPDATE networks
-        SET address = ?,
-            updated_at = CURRENT_TIMESTAMP
+        SET address = ?
         WHERE code = ?
-        """,
-        (
-            address,
-            network_code
-        )
-    )
+    """, (
+        address,
+        network_code
+    ))
 
     connection.commit()
+
     updated = cursor.rowcount > 0
+
     connection.close()
 
     return updated
@@ -1100,3 +1098,92 @@ def get_active_miners():
     connection.close()
 
     return miners
+    # =========================================================
+# ADMIN FUNCTIONS
+# =========================================================
+
+def get_all_users(limit=50):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            users.*,
+            COALESCE(balances.balance_usd, 0) AS balance_usd
+        FROM users
+        LEFT JOIN balances
+            ON users.id = balances.user_id
+        ORDER BY users.id DESC
+        LIMIT ?
+    """, (limit,))
+
+    users = [dict(row) for row in cursor.fetchall()]
+    connection.close()
+
+    return users
+
+
+def get_admin_statistics():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    stats = {}
+
+    cursor.execute("SELECT COUNT(*) AS total FROM users")
+    stats["users"] = cursor.fetchone()["total"]
+
+    cursor.execute("""
+        SELECT COALESCE(SUM(balance_usd), 0) AS total
+        FROM balances
+    """)
+    stats["balance"] = cursor.fetchone()["total"]
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM withdrawals
+        WHERE status = 'pending'
+    """)
+    stats["pending_withdrawals"] = cursor.fetchone()["total"]
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM deposits
+        WHERE status = 'pending'
+    """)
+    stats["pending_deposits"] = cursor.fetchone()["total"]
+
+    connection.close()
+
+    return stats
+
+
+def get_all_tasks():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM tasks
+        ORDER BY id DESC
+    """)
+
+    tasks = [dict(row) for row in cursor.fetchall()]
+    connection.close()
+
+    return tasks
+
+
+def get_all_networks():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM networks
+        ORDER BY id ASC
+    """)
+
+    networks = [dict(row) for row in cursor.fetchall()]
+    connection.close()
+
+    return networks
