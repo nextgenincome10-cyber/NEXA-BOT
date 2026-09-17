@@ -1203,30 +1203,50 @@
         }
 
 
-        function addTask() {
+        
+async function addTask() {
+    const title = document.getElementById("task-title").value.trim();
+    const description = document.getElementById("task-description").value.trim();
+    const reward = document.getElementById("task-reward").value;
+    const taskType = document.getElementById("task-type").value;
+    const target = document.getElementById("task-target").value.trim();
 
-            const title =
-                document.getElementById(
-                    "task-title"
-                ).value.trim();
+    if (!title || !description || !reward) {
+        alert("Please fill in all required fields.");
+        return;
+    }
 
+    const data = {
+        title: title,
+        description: description,
+        reward_usd: Number(reward),
+        task_type: taskType,
+        target: target
+    };
 
-            if (!title) {
+    try {
+        const response = await fetch("/admin/tasks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-                alert(
-                    "Enter task title."
-                );
+        const result = await response.json();
 
-                return;
-            }
-
-
-            alert(
-                "Task form is ready. " +
-                "Backend connection will be added next."
-            );
-
+        if (!response.ok) {
+            throw new Error(result.message || "Failed to add task.");
         }
+
+        alert("Task added successfully!");
+        location.reload();
+
+    } catch (error) {
+        console.error("Add task error:", error);
+        alert("Error: " + error.message);
+    }
+}
 
 
         function saveFee() {
